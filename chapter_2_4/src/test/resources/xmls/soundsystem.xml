@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="sgtPeppers" class="com.getset.bsia.soundsystem.SgtPeppers" p:artist="The Beetles">
+        <property name="title" value="Sgt. Papper's Lonely hearts Club Band"/>
+    </bean>
+
+    <bean id="blankDisk" class="com.getset.bsia.soundsystem.BlankDisk">
+        <constructor-arg value="Sgt. Papper's Lonely hearts Club Band"/>
+        <constructor-arg value="The Beetles"/>
+        <constructor-arg>
+            <list>
+                <value>music 1</value>
+                <value>music 2</value>
+                <value>music 3</value>
+                <value>music 4</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!--<bean id="blankDisk" class="com.getset.bsia.soundsystem.BlankDisk" c:artist="Sgt. Papper's Lonely hearts Club Band" c:title="The Beatles"/>-->
+
+    <!--<bean id="cdPlayer" class="com.getset.bsia.soundsystem.CDPlayer">-->
+        <!--<constructor-arg ref="sgtPeppers"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="cdPlayer" class="com.getset.bsia.soundsystem.CDPlayer" c:cd-ref="sgtPeppers"/>-->
+    <bean id="cdPlayer" class="com.getset.bsia.soundsystem.CDPlayer" c:_0-ref="sgtPeppers"/>
+
+</beans>
