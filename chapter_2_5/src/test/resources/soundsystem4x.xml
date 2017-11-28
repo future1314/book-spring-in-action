@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="config" class="com.getset.bsia.soundsystem.configs.BlankDiskConfig4Xml"/>
+
+    <bean id="cdPlayer4x" class="com.getset.bsia.soundsystem.CDPlayer" c:cd-ref="blankDisk4x">
+        <!--<constructor-arg ref="blankDisk4x"/>-->
+        <!--<property name="cd" ref="blankDisk4x"/>-->
+    </bean>
+
+</beans>

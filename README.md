@@ -77,3 +77,9 @@ JavaConfig的方式相对XML来说更加推荐，因为它类型安全、对重�
 
 具体示例，请见[chapter_2_4](chapter_2_4)
 
+### 2.5 多种配置方式混合
+
+Spring允许自动化装配、JavaConfig、XML配置多种配置方式混合使用，并提供了import机制。
+
+具体示例，请见[chapter_2_5](chapter_2_5)
+

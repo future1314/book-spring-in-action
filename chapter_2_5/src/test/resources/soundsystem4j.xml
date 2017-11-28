@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="blankDisk4j" class="com.getset.bsia.soundsystem.BlankDisk">
+        <constructor-arg value="Sgt. Papper's Lonely hearts Club Band"/>
+        <constructor-arg value="The Beetles"/>
+        <constructor-arg>
+            <list>
+                <value>music 1</value>
+                <value>music 2</value>
+                <value>music 3</value>
+                <value>music 4</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>
