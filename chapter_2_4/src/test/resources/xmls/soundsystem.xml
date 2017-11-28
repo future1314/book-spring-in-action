@@ -22,13 +22,13 @@
         </constructor-arg>
     </bean>
 
-    <!--<bean id="blankDisk" class="com.getset.bsia.soundsystem.BlankDisk" c:artist="Sgt. Papper's Lonely hearts Club Band" c:title="The Beatles"/>-->
+    <!--<bean id="blankDisk" class="com.getset.bsia.BlankDisk" c:artist="Sgt. Papper's Lonely hearts Club Band" c:title="The Beatles"/>-->
 
-    <!--<bean id="cdPlayer" class="com.getset.bsia.soundsystem.CDPlayer">-->
+    <!--<bean id="cdPlayer" class="com.getset.bsia.CDPlayer">-->
         <!--<constructor-arg ref="sgtPeppers"/>-->
     <!--</bean>-->
 
-    <!--<bean id="cdPlayer" class="com.getset.bsia.soundsystem.CDPlayer" c:cd-ref="sgtPeppers"/>-->
+    <!--<bean id="cdPlayer" class="com.getset.bsia.CDPlayer" c:cd-ref="sgtPeppers"/>-->
     <bean id="cdPlayer" class="com.getset.bsia.soundsystem.CDPlayer" c:_0-ref="sgtPeppers"/>
 
 </beans>
