@@ -119,3 +119,23 @@ Autowire默认是基于类型匹配的，仅有一个bean匹配所需的结果�
   * 可以使用`@Primary`注解标识优先匹配的bean；
   * 可以使用`@Qualifier`进行限定，具体示例，请见[chapter_3_2](chapter_3_2)
 
+### 3.4 bean的作用域
+
+在默认情况下， Spring应用上下文中所有bean都是作为以单例（ singleton） 的形式创建的。 也就是说， 不管给定的一个bean被注入到其他bean多少次， 每次所注入的都是同一个实例。
+
+Spring定义了多种作用域， 可以基于这些作用域创建bean， 包括：
+  * 单例（Singleton）： 在整个应用中， 只创建bean的一个实例。
+  * 原型（Prototype）： 每次注入或者通过Spring应用上下文获取的时候， 都会创建一个新的bean实例。
+  * 会话（Session）： 在Web应用中， 为每个会话创建一个bean实例。
+  * 请求（Rquest）： 在Web应用中， 为每个请求创建一个bean实例。
+
+JavaConfig的配置方式，可以通过`@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)`这样的注解定义scope；
+XML的配置方式，可以通过在`<bean>`标签中增加`scope`属性来定义，如`<bean id="..." class="..." scope="prototype"/>`。
+
+### 3.5 运行时值注入
+
+Spring提供了两种在运行时求值的方式：
+  * 属性占位符（Property placeholder）；
+  * Spring表达式语言（SpEL）。
+
+具体示例，请见[chapter_3_5](chapter_3_5)
