@@ -83,3 +83,39 @@ Spring允许自动化装配、JavaConfig、XML配置多种配置方式混合使�
 
 具体示例，请见[chapter_2_5](chapter_2_5)
 
+## 第三章 高级装配
+### 3.1 环境与Profile
+1）在3.1版本中， Spring引入了bean profile的功能。 要使用profile， 你首先要将所有不同的bean定义整理到一个或多个profile之中， 在将应用部署到每个环境时， 要确保对应的profile处于激活（ active） 的状态。
+
+  * 在JavaConfig中，使用`@Profile`注解来指定某个bean属于哪个profile，注解可以是类级别的，也可以是方法级别的；
+  * 在XML中，可以通过`<beans>`元素的`profile`属性来定义其内的bean属于哪个profile。
+
+2）Profile的激活：
+
+Spring在确定哪个profile处于激活状态时， 需要依赖两个独立的属性： spring.profiles.active和spring.profiles.default。 如果设置了spring.profiles.active属性的话， 那么它的值就会用来确定哪个profile是激活的。 但如果没有设置spring.profiles.active属性的话， 那Spring将会查找spring.profiles.default的值。 如果spring.profiles.active和spring.profiles.default均没有设置的话， 那就没有激活的profile， 因此只会创建那些没有定义在profile中的bean。
+
+有多种方式来设置这两个属性：
+  * 作为DispatcherServlet的初始化参数；
+  * 作为Web应用的上下文参数；
+  * 作为JNDI条目；
+  * 作为环境变量；
+  * 作为JVM的系统属性；
+  * 在集成测试类上， 使用@ActiveProfiles注解设置。
+
+3）测试中指定Profile
+
+Spring提供了`@ActiveProfiles("dev")`注解， 我们可以使用它来指定运行测试时要激活哪个profile。 
+
+### 3.2 条件化的bean
+
+Spring 4引入了一个新的@Conditional注解， 它可以用到带有@Bean注解的方法上。 如果给定的条件计算结果为true， 就会创建这个bean， 否则的话， 这个bean会被忽略。
+
+具体示例，请见[chapter_3_2](chapter_3_2)
+
+### 3.3 处理自动装配的歧义性
+
+Autowire默认是基于类型匹配的，仅有一个bean匹配所需的结果时， 自动装配才是有效的。 如果不仅有一个bean能够匹配结果的话， 这种歧义性会阻碍Spring自动装配属性、 构造器参数或方法参数。
+
+  * 可以使用`@Primary`注解标识优先匹配的bean；
+  * 可以使用`@Qualifier`进行限定，具体示例，请见[chapter_3_2](chapter_3_2)
+
