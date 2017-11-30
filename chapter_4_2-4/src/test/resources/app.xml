@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="xiangsheng" class="com.getset.bsia.aop.xml.Xiangsheng"/>
+    <bean id="audience" class="com.getset.bsia.aop.xml.Audience"/>
+
+    <aop:config>
+        <aop:aspect ref="audience">
+            <aop:pointcut id="perform" expression="execution(* com.getset.bsia.aop.xml.Performance.perform(..))"/>
+            <aop:before pointcut-ref="perform" method="silenceCellPhone"/>
+            <aop:before pointcut-ref="perform" method="takeSeats"/>
+            <aop:after-returning pointcut-ref="perform" method="applause"/>
+            <aop:after-returning pointcut="execution(* com.getset.bsia.aop.xml.Performance.perform(int)) and args(num))" method="afterPerform"/>
+            <aop:around pointcut-ref="perform" method="around"/>
+            <aop:declare-parents types-matching="com.getset.bsia.aop.xml.Performance+" implement-interface="com.getset.bsia.aop.xml.Light" default-impl="com.getset.bsia.aop.xml.StageLight"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>

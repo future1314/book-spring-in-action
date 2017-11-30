@@ -139,3 +139,75 @@ Spring提供了两种在运行时求值的方式：
   * Spring表达式语言（SpEL）。
 
 具体示例，请见[chapter_3_5](chapter_3_5)
+
+## 第四章 面向切面的Spring
+### 4.1 什么是AOP
+
+描述切面的常用术语有Advice、pointcut、join point、aspect、introduction、weaving。
+
+织入（weaving）是把切面应用到目标对象并创建新的代理对象的过程。 切面在指定的连接点被织入到目标对象中。 在目标对象的生命周期里有多个点可以进行织入：
+  * 编译期： 切面在目标类编译时被织入。 这种方式需要特殊的编译器。 AspectJ的织入编译器就是以这种方式织入切面的。
+  * 类加载期： 切面在目标类加载到JVM时被织入。 这种方式需要特殊的类加载器（ ClassLoader） ， 它可以在目标类被引入应用之前增强该目标类的字节码。 AspectJ5的加载时织入（ load-time weaving， LTW） 就支持以这种方式织入切面。
+  * 运行期： 切面在应用运行的某个时刻被织入。 一般情况下， 在织入切面时， AOP容器会为目标对象动态地创建一个代理对象。 Spring AOP就是以这种方式织入切面的。
+
+Spring对AOP的支持有4种：
+  * 基于代理的经典Spring AOP(笨重且复杂，已不推荐使用)；
+  * 纯POJO切面（需要XML配置，aop命名空间）；
+  * `@AspectJ`注解驱动的切面（Spring基于代理的AOP， 但是编程模型几乎与编写成熟的AspectJ注解切面完全一致。 这种AOP风格的好处在于能够不使用XML来完成功能）；
+  * 注入式AspectJ切面（适用于Spring各版本）。
+
+**Spring在运行时应用切面**
+
+直到应用需要被代理的bean时， Spring才创建代理对象。 如果使用的是ApplicationContext的话， 在ApplicationContext从BeanFactory中加载所有bean的时候， Spring才会创建被代理的对象。 因为Spring运行时才创建代理对象， 所以我们不需要特殊的编译器来织入Spring AOP的切面。
+
+**Spring只支持方法级别的连接点**
+
+因为Spring基于动态代理， 所以Spring只支持方法连接点。 这与一些其他的AOP框架是不同的， 例如AspectJ和JBoss， 除了方法切点， 它们还提供了字段和构造器接入点。 Spring缺少对字段连接点的支持， 无法让我们创建细粒度的通知， 例如拦截对象字段的修改。 而且它不支持构造器连接点， 我们就无法在bean创建时应用通知。
+
+但是方法拦截可以满足绝大部分的需求。 如果需要方法拦截之外的连接点拦截功能， 那么我们可以利用Aspect来补充Spring AOP的功能。
+
+### 4.2 通过切点来选择连接点
+
+在Spring AOP中， 要使用AspectJ的切点表达式语言来定义切点。并且Spring仅支持AspectJ切点指示器（pointcut designator）的一个子集。如下：
+
+  * `execution()`，用于匹配连接点的执行方法。只有这个表达式是实际执行匹配的，其他都是用来限制匹配的。
+  * `within()`，限制连接点匹配指定的类型。
+  * `@within()`，限制连接点匹配指定注解所标注的类型（ 当使用Spring AOP时， 方法定义在由指定的注解所标注的类里）。
+  * `arg()`，限制连接点匹配参数为指定类型的执行方法。
+  * `@args()`，限制连接点匹配参数由指定注解标注的执行方法。
+  * `this()`，限制连接点匹配AOP代理的bean引用为指定类型的类。
+  * `target`，限制连接点匹配目标对象为指定类型的类。
+  * `@target()`，限制连接点匹配特定的执行对象， 这些对象对应的类要具有指定类型的注解。
+  * `@annotation`，限定匹配带有指定注解的连接点。
+
+此外，Spring还增加了一个`bean()`表达式：
+
+  * `bean()`，使用bean ID或bean名称作为参数来限制切点只匹配特定的bean。
+
+如：
+  * `execution(* com.getset.bais.aop.concert.Performance.perform(..) && within(com.getset.bais.aop.concert.*))`
+  * `execution(* com.getset.bais.aop.concert.Performance.perform(..) && bean('woodlock'))`
+
+### 4.3 使用注解创建切面
+
+  * 使用`@Aspect`注解切面类；
+  * 使用`@PointCut`注解生命`被切`的目标方法，需要用到上边的切点表达式；
+  * 使用`@Before`、`@After`、`@AfterReturning`、`@AfterThrowing`和`@Around`注解在要织入的方法上；
+    * 可以基于`@PointCut`声明的切点或切点表达式声明的切点；
+    * 可以使用`args`来声明参数化的Advice；
+  * 使用`@EnableAspectAutoProxy`注解配置类，来启用`@Aspect`的自动代理；
+  * 使用`@DeclareParents`注解来引入其他接口功能。
+
+### 4.4 在XML中声明切面
+
+使用注解创建切面很方便，但是存在一个明显的不便：当源码不在自己手中的时候，或源码不方便修改的时候，就无法这么做了。这时候需要XML的配置方式发挥作用了。
+
+  * 使用`<aop:aspect>`定义一个切面；
+  * 使用`<aop:pointcut>`定义一个切点；
+  * 使用`<aop:before>`、`<aop:after>`、`<aop:after-returning>`、`<aop:after-throwing>`、`<aop:around>`定义要织入的方法；
+    * 可以注入`<aop:pointcut>`和<args>?
+  * 使用`<aop:aspectj-autoproxy>启用`@Aspect`注解驱动的切面；
+  * 使用`<aop:declare-parents>`为被advice的对象引入额外的接口；
+  * `<aop:config>`是一个顶层AOP配置元素，大多数的`<aop:*>`元素必须包含其内。
+
+以上3节，具体示例，请见[chapter_4_2-4](chapter_4_2-4)
