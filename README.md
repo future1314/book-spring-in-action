@@ -211,3 +211,19 @@ Spring对AOP的支持有4种：
   * `<aop:config>`是一个顶层AOP配置元素，大多数的`<aop:*>`元素必须包含其内。
 
 以上3节，具体示例，请见[chapter_4_2-4](chapter_4_2-4)
+
+## 第五章 构建Spring Web应用程序
+
+跟踪Spring MVC的请求处理过程，如下图：
+
+![SpringMVC请求处理过程](chapter_5/images/mvc-steps.png)
+
+1. 请求首先到达一个front controller servlet，前端控制器是web框架常用的Web应用程序模式，这个单例的Servlet（SpringMVC中就是`DispatcherServlet`）将请求委托给应用程序的其他组件来执行。
+2. `DispatcherServlet`的任务是将请求分发给相应的`Controller`来处理，前者通过查询`RequestMapping`中的映射关系来确定各种url的请求分别由哪个`Controller`来处理。
+3. `DispatcherServlet`将请求发送给`Controller`后，请求中的信息也会交给`Controller`处理。
+4. `Controller`处理完成后，可能会需要反馈一些信息给请求方，这些信息以`Model`的形式存在；此外只有数据信息还不够，还需要进行可视化展现，通常用HTML/JSP，这些展现页面叫做`View`。`Controller`将`Model`和`View`名称发回给`DispatcherServlet`。
+5. `DispatcherServlet`收到`Model`和`View`名称后，使用视图解析器（view resolver）解析出具体的视图实现，比如JSP。
+6. `DispatcherServlet`用定位到的视图结合`Model`中的信息进行渲染。
+7. 最终视图渲染后的内容通过响应对象传给客户端。
+
+下面搭建一个简单的SpringMVC的demo来测试，具体请见[chapter_5](chapter_5)。
