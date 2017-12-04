@@ -237,3 +237,42 @@ Spring对AOP的支持有4种：
 ### 6.4 使用Thymeleaf
 
 具体示例，请见[chapter_6_4](chapter_6_4)
+
+## 第七章 SpringMVC的高级技术
+
+### 7.2 处理multipart形式的数据
+
+即文件上传。需要如下操作：
+1. 在`ServletConfig`中配置multipart解析器`MultipartResolver`，Spring内置了两个`MultipartResolver`：
+  * `CommonsMultipartResolver`：使用Jakarta Commons FileUpload 解析multipart请求；
+  * `StandardServletMultipartResolver`：Spring 3.1开始增加的解析器，推荐用这个。
+2. 上一条配置仅返回一个`StandardServletMultipartResolver`对象，具体配置通过在`DispatcherServletInitializer`中重写`customizeRegistration`方法来配置：
+  * 配置中通过`MultipartConfigElement`构造方法参数设置文件上传临时路径、文件大小和整个请求文件大小限制、上传文件达到多大会写入到磁盘上。
+3. 处理multipart请求需要做如下处理：
+  * `<form>`表单需要指定`enctype`，如`<form method="POST" enctype="multipart/form-data">`；
+  * 表单中的input元素要定义为file类型，如`<input type="file" name="picture" accept="image/jpeg,image/png,image/gif">`；
+  * 控制器方法中相应的multipart参数用`@RequestPart("name")`注解，如`@RequestPart("picture") MultipartFile picture`。
+
+### 7.3 处理异常
+
+对于异常的处理有两种方式：
+  * 在异常类上通过`@ResponseStatus`注解指定返回码和返回信息；
+  * 如果想捕获异常并做进一步处理，可以拿出一个专门的控制器方法来处理异常（比如返回错误页面的视图名），这个方法用`@ExceptionHandler`注解指定，对当前控制器内的所有指定异常有效；
+  * 如果`@ExceptionHandler`注解指定的方法位于使用`@ControllerAdvice`注解的类中，那么该方法对整个应用程序的注解指定的异常都有效。
+
+### 7.4 为控制器添加通知
+
+7.3最后一条实际上就是利用了控制器通知`@ControllerAdvice`，这样的类可以包含如下几种注解的方法：
+  * `@ExceptionHandler`统一处理异常；
+  * `@InitBinder`应用到所有@RequestMapping注解方法，在其执行之前初始化数据绑定器；
+  * `@ModelAttribute`应用到所有@RequestMapping注解方法，在其执行之前把返回值放入Model。
+
+### 7.5 跨重定向请求传递数据
+
+借助`"redirect:"`可以实现请求的重定向，它的直接好处就是可以防止由于用户点击浏览器的刷新或后退按钮时重复执行请求，通常在POST请求时返回重定向的视图名称。
+
+同时，重定向请求也有个问题，那就是重定向后的请求其模型中的内容会清空，因此如果要在重定向前后的请求中共享数据，可以通过如下两种方式实现：
+  * 将信息通过URL传递，比如`return "redirect:spitter/" + spitter.getUsername()`；但是字符串拼接在URL和SQL查询中通常都是存在风险的，Spring提供了占位符的方式来脱去风险，如`return "redirect:spitter/{username}"`，其中`username`用占位符表示，其中的不安全字符会被转义，唯一需要做的就是先将`username`作为attribute放到Model中（未测试OK）；
+  * 对于复杂的内容，比如对象信息，就很难通过URL传递了，这时可以先放到session的属性列表中，然后再下次请求取回，并清掉session中的属性。Spring提供了`RedirectAttribute`用于保存重定向的属性，使用`setFlashAttribute`方法设置。
+
+具体示例，请见[chapter_7](chapter_7)
