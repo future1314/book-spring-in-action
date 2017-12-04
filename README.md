@@ -227,3 +227,13 @@ Spring对AOP的支持有4种：
 7. 最终视图渲染后的内容通过响应对象传给客户端。
 
 下面搭建一个简单的SpringMVC的demo来测试，具体请见[chapter_5](chapter_5)。
+
+## 第六章 渲染Web视图
+
+将控制器中请求处理的逻辑和视图中的渲染实现解耦是Spring MVC的一个重要特性。 比如上一章的例子，我们使用了名为InternalResourceViewResolver的视图解析器，将控制器与具体的JSP视图解耦，控制器本身并不关心返回的字符串是个JSP还是HTML还是其他。
+
+（介绍JSP和JSTL的部分略）
+
+### 6.4 使用Thymeleaf
+
+具体示例，请见[chapter_6_4](chapter_6_4)
