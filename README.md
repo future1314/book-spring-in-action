@@ -276,3 +276,21 @@ Spring对AOP的支持有4种：
   * 对于复杂的内容，比如对象信息，就很难通过URL传递了，这时可以先放到session的属性列表中，然后再下次请求取回，并清掉session中的属性。Spring提供了`RedirectAttribute`用于保存重定向的属性，使用`setFlashAttribute`方法设置。
 
 具体示例，请见[chapter_7](chapter_7)
+
+## 第八章 使用Spring Web Flow
+
+Spring Web Flow的作用是创建会话式的Web应用程序，适用于按规定流程运行的程序。
+
+其实SpringMVC或struts本身也可以开发出流程化的应用，使用Spring Web Flow的优势在于能够将流程的定义与实现流程的类和视图分离开来。
+
+Spring Web Flow 还不支持Java配置方式，因此必须要通过XML来配置。在Context中要配置两个bean：
+  * `org.springframework.webflow.mvc.servlet.FlowHandlerMapping`，用来指定流程描述文件，它接收一个`flow-registry`作为参数，`flow-registry`定义了流程描述文件的前缀和后缀，以便搜索。
+  * `org.springframework.webflow.mvc.servlet.FlowHandlerAdapter`，类似于SpringMVC的控制器，来响应和处理流程请求，它接收一个`flow-executor`作为参数。这个适配器是`DispatcherServlet`和Spring Web Flow之间的桥梁。
+
+具体到流程的定义，包含三个主要元素定义：状态、转移和流程数据。想象一个我们经常见到的流程图：
+  * 状态：就是流程图上的流程节点，包括行为（Action，流程节点执行的操作）、决策（Decision，通常菱形的流程节点，会根据判断条件分叉）、视图（View，会进入到页面同用户交互）、子流程（Subflow，包含子流程）、结束（End，结束节点，如果是在子流程中，那么结束后会返回上级流程）。
+  * 转移：就是流程图上的箭头，通常由事件出发，到达下一个状态。通常定义在出发的状态中。
+  * 流程数据：流程之所以能够或需要串起来，是因为有数据贯穿，比如订单处理流程中的数据就是订单。流程数据有作用域和可见性限制，包括Conversation（全流程及子流程可见，通常用`<var>`定义）、Flow（当前流程可见）、Request（同请求的声明周期）、Flash（视图状态渲染后被清楚，类似FlashAttribute）、View（进入试图状态时创建，退出时销毁）。`<var>`定义的是全流程有效的，`<set>`和`<evaluate>`创建的变量，可以分别通过`name`和`result`的前缀指定作用域，如`<set name="flowScope.order"/>`。
+
+具体示例，请见[chapter_8](chapter_8)，这个例子直接拷过来的本书的源码，用`./gradlew clean war`打包。
+
